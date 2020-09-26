@@ -89,6 +89,10 @@
 #  define MAGIC_ENUM_RANGE_MAX 128
 #endif
 
+#if !defined(MAGIC_ENUM_RANGE_TYPE)
+#  define MAGIC_ENUM_RANGE_TYPE std::int16_t
+#endif
+
 namespace magic_enum {
 
 // If need another optional type, define the macro MAGIC_ENUM_USING_ALIAS_OPTIONAL.
@@ -127,10 +131,10 @@ struct enum_range {
 };
 
 static_assert(MAGIC_ENUM_RANGE_MIN <= 0, "MAGIC_ENUM_RANGE_MIN must be less or equals than 0.");
-static_assert(MAGIC_ENUM_RANGE_MIN > (std::numeric_limits<std::int16_t>::min)(), "MAGIC_ENUM_RANGE_MIN must be greater than INT16_MIN.");
+static_assert(MAGIC_ENUM_RANGE_MIN > (std::numeric_limits<MAGIC_ENUM_RANGE_TYPE>::min)(), "MAGIC_ENUM_RANGE_MIN must be greater than MAGIC_ENUM_RANGE_TYPE's minimum limit.");
 
 static_assert(MAGIC_ENUM_RANGE_MAX > 0, "MAGIC_ENUM_RANGE_MAX must be greater than 0.");
-static_assert(MAGIC_ENUM_RANGE_MAX < (std::numeric_limits<std::int16_t>::max)(), "MAGIC_ENUM_RANGE_MAX must be less than INT16_MAX.");
+static_assert(MAGIC_ENUM_RANGE_MAX < (std::numeric_limits<MAGIC_ENUM_RANGE_TYPE>::max)(), "MAGIC_ENUM_RANGE_MAX must be less than MAGIC_ENUM_RANGE_TYPE's maximum limit.");
 
 static_assert(MAGIC_ENUM_RANGE_MAX > MAGIC_ENUM_RANGE_MIN, "MAGIC_ENUM_RANGE_MAX must be greater than MAGIC_ENUM_RANGE_MIN.");
 
@@ -355,7 +359,7 @@ constexpr int reflected_min() noexcept {
     return 0;
   } else {
     constexpr auto lhs = customize::enum_range<E>::min;
-    static_assert(lhs > (std::numeric_limits<std::int16_t>::min)(), "magic_enum::enum_range requires min must be greater than INT16_MIN.");
+    static_assert(lhs > (std::numeric_limits<MAGIC_ENUM_RANGE_TYPE>::min)(), "magic_enum::enum_range requires min must be greater than MAGIC_ENUM_RANGE_TYPE's minimum limit.");
     constexpr auto rhs = (std::numeric_limits<U>::min)();
 
     if constexpr (cmp_less(lhs, rhs)) {
@@ -374,7 +378,7 @@ constexpr int reflected_max() noexcept {
     return std::numeric_limits<U>::digits - 1;
   } else {
     constexpr auto lhs = customize::enum_range<E>::max;
-    static_assert(lhs < (std::numeric_limits<std::int16_t>::max)(), "magic_enum::enum_range requires max must be less than INT16_MAX.");
+    static_assert(lhs < (std::numeric_limits<MAGIC_ENUM_RANGE_TYPE>::max)(), "magic_enum::enum_range requires max must be less than MAGIC_ENUM_RANGE_TYPE's maximum limit.");
     constexpr auto rhs = (std::numeric_limits<U>::max)();
 
     if constexpr (cmp_less(lhs, rhs)) {
